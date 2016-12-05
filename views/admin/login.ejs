@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>后台管理登录</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="blog,xushd">
+    <meta name="description" content="xushd">
+    <link type="text/css" rel="stylesheet" href="/libs/layui/css/layui.css">
+    <link type="text/css" rel="stylesheet" href="/stylesheets/login.css">
+</head>
+<div class="login">
+    <h1>Login</h1>
+    <form >
+        <input type="text" name="u" id="user_accout" placeholder="用户名"  />
+        <input type="password" name="p" id="user_password" placeholder="密码"  />
+        <button type="button" class="btn btn-primary btn-block btn-large">登录</button>
+    </form>
+</div>
+<script src="/libs/layui/layui.js" type="text/javascript"></script>
+<script>
+    layui.config({
+        base: '/javascripts/' //你的模块目录
+    }).use('auth'); //加载入口
+</script>
+</html>
