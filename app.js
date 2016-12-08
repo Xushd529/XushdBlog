@@ -9,12 +9,14 @@ var passport = require('passport');
 
 var logger = require('morgan');
 
+var passport = require('passport');
+var i18n = require('./models/i18n');
 
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 var auth = require('./routes/auth');
-
+var admin = require('./routes/admin')
 var app = express();
 
 // view engine setup
@@ -29,11 +31,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// i18n init parses req for language headers, cookies, etc.
+app.use(i18n.init);
+
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/', index);
 app.use('/', auth);
 app.use('/users', users);
 
-
+app.use('/admin', require('connect-ensure-login').ensureLoggedIn('/login'), admin);
 
 app.use(session({
   secret:'xushd-session',
@@ -44,8 +51,7 @@ app.use(session({
   saveUninitialized:false
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,4 +1,5 @@
 /**
+ * 工具类
  * Created by Xushd on 2016/12/2.
  */
 var fs = require('fs');
@@ -43,5 +44,13 @@ exports.getNowDate = function(){
 exports.getNowWeek = function(){
     var week = ["日","一","二","三","四","五","六"];
     return "星期"+week[new Date().getDay()];
+}
+/**
+ * 获取指定范围内随机数
+ * @param num
+ * @returns {number}
+ */
+exports.getRound = function(num){
+   return Math.round(Math.random()*(num-1)+1);
 }
 module.exports

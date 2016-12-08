@@ -3,12 +3,12 @@ var router = express.Router();
 var path = require('path');
 var async = require('async');
 var util = require('../utils/tool.js');
-var query = require('../models/mysql.js')
+var tips = require('../proxy/tips');
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  //parallelº¯ÊıÊÇ²¢ĞĞÖ´ĞĞ¶à¸öº¯Êı£¬Ã¿¸öº¯Êı¶¼ÊÇÁ¢¼´Ö´ĞĞ£¬²»ĞèÒªµÈ´ıÆäËüº¯ÊıÏÈÖ´ĞĞ¡£
-  async.parallel([
-      function(callback){
+    //parallelå‡½æ•°æ˜¯å¹¶è¡Œæ‰§è¡Œå¤šä¸ªå‡½æ•°ï¼Œæ¯ä¸ªå‡½æ•°éƒ½æ˜¯ç«‹å³æ‰§è¡Œï¼Œä¸éœ€è¦ç­‰å¾…å…¶å®ƒå‡½æ•°å…ˆæ‰§è¡Œã€‚
+    async.parallel([
+        function(callback){
             util.getConfig(path.join(__dirname, '../config/setting.json'),function(err, settings){
                 if (err) {
                     callback(err);
@@ -16,32 +16,32 @@ router.get('/', function(req, res, next) {
                     callback(null, settings);
                 }
             });
-      },
-      function(callback){
-          query("SELECT * FROM tips ORDER BY RAND() LIMIT 1",function(err,vals,fields){
-              if(err){
-                  callback(err);
-              }else{
-                  callback(null,vals);
+        },
+        function(callback){
+            tips.getRoundTip(function(err,tips){
+                if(err){
+                    callback(err);
+                }else{
+                    callback(null, tips);
+                }
+            })
+        }
+    ],function(err,results){
+        if(err){
+            next(err);
+        }else{
+            var settings = results[0];
+            var tip = results[1];
+            //console.log(tip);
+            res.render('index', {
+                title: settings["SiteName"],
+                nowdate:util.getNowDate(),
+                nowweek:util.getNowWeek(),
+                tip:tip.tip_content
+            });
+        }
 
-              }
-          });
-      }
-  ],function(err,results){
-      if(err){
-          next(err);
-      }else{
-          var settings = results[0];
-          var tip = results[1];
-          res.render('index', {
-              title: settings["SiteName"],
-              nowdate:util.getNowDate(),
-              nowweek:util.getNowWeek(),
-              tip:tip[0].tip_content
-          });
-      }
-
-  });
+    });
 });
 
 module.exports = router;
