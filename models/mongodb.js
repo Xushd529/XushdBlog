@@ -5,6 +5,8 @@ var dbPath = require('../config').DbPath;
 var mongoose = require('mongoose');
 var extend = require('mongoose-schema-extend');
 var i18n = require('./i18n');
+
+
 mongoose.connect(dbPath);
 var db = mongoose.connection;
 db.on('error', function (err) {

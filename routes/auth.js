@@ -6,6 +6,7 @@ var router = express.Router();
 var passport = require('passport');
 var Strategy = require('passport-local').Strategy;
 var user = require("../proxy/user");
+var logger = require("../utils/logger");
 passport.use(new Strategy(
     {
         usernameField: 'UserName',//页面上的用户名字段的name属性值
@@ -25,8 +26,7 @@ passport.serializeUser(function (user, callback) {
     callback(null, user._id);
 });
 passport.deserializeUser(function (id, callback) {
-    var query = {_id:id};
-    user.find(query,function(err,user){
+    user.findById(id,function(err,user){
         if(err){
             return callback(err);
         }
@@ -44,7 +44,7 @@ router.post('/login', function (req, res, next) {
         if (err) {
             next(err);
         } else if (!user) {
-            //logger.errLogger(req, new Error(res.__("auth.wrong_info")));
+            logger.errLogger(req, new Error(res.__("auth.wrong_info")));
             res.json({valid: false});
         } else {
             //登录操作

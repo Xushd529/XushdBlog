@@ -5,7 +5,6 @@ var morgn = require('morgan');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var bodyParser = require('body-parser');
-var passport = require('passport');
 
 var logger = require('morgan');
 
@@ -34,14 +33,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // i18n init parses req for language headers, cookies, etc.
 app.use(i18n.init);
 
-app.use(passport.initialize());
-app.use(passport.session());
-app.use('/', index);
-app.use('/', auth);
-app.use('/users', users);
-
-app.use('/admin', require('connect-ensure-login').ensureLoggedIn('/login'), admin);
-
 app.use(session({
   secret:'xushd-session',
   cookie:{
@@ -50,6 +41,24 @@ app.use(session({
   resave:false,
   saveUninitialized:false
 }));
+
+//将req.isAuthenticated()封装成中间件
+var isAuthenticated = function(req, res, next) {
+  if (req.isAuthenticated()) return next();
+  res.redirect('/login');
+};
+
+app.use(passport.initialize());
+app.use(passport.session());
+//博客首页
+app.use('/', index);
+//后台登录
+app.use('/', auth);
+//后台的请求地址需要登录认证
+app.use('/admin', isAuthenticated, admin);
+
+
+
 
 
 

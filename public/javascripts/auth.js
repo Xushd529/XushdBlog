@@ -18,7 +18,6 @@ layui.define(['jquery','layer','MD5'], function(exports){
             return;
         }
         userpassword = MD5.hex_md5(userpassword);
-        console.log(userpassword);
         $.ajax({
             url: "/login",
             type: "POST",
@@ -26,6 +25,7 @@ layui.define(['jquery','layer','MD5'], function(exports){
             success: function (data) {
                 if (data.valid === true) {
                     window.location.href = data.returnTo;
+                    console.log(JSON.stringify(data));
                 } else {
                     layer.msg('帐号或密码错误', {icon: 5});
 
