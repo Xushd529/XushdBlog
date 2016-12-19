@@ -1,0 +1,25 @@
+[
+	{
+		"title": "基本元素",
+		"icon": "fa-cubes",
+		"spread": false,
+		"children": [
+			{
+				"title": "按钮",
+				"icon": "&#xe641;",
+				"href": "button.html"
+			}
+		]
+	}, {
+		"title": "博文管理",
+		"icon": "fa-book",
+		"spread": false,
+		"children": [
+			{
+				"title": "分类管理",
+				"icon": "fa-bookmark",
+				"href": "/admin/category"
+			}
+		]
+	}
+]

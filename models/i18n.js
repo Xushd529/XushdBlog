@@ -10,7 +10,7 @@ i18n.configure({
   // query parameter to switch locale (ie. /home?locale=en) - defaults to NULL
   queryParameter: 'locale',
   // you may alter a site wide default locale
-  defaultLocale: 'en-US',
+  defaultLocale: 'zh-CN',
   // enable object notation in order to use nested translation
   objectNotation: true,
   // sync locale information accros all files - defaults to false

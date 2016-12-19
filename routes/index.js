@@ -2,14 +2,14 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var async = require('async');
-var util = require('../utils/tool.js');
+var tool = require('../utils/tool.js');
 var tips = require('../proxy/tips');
 /* GET home page. */
 router.get('/', function(req, res, next) {
     //parallel函数是并行执行多个函数，每个函数都是立即执行，不需要等待其它函数先执行。
     async.parallel([
         function(callback){
-            util.getConfig(path.join(__dirname, '../config/setting.json'),function(err, settings){
+            tool.getConfig(path.join(__dirname, '../config/setting.json'),function(err, settings){
                 if (err) {
                     callback(err);
                 } else {
@@ -35,8 +35,8 @@ router.get('/', function(req, res, next) {
             //console.log(tip);
             res.render('index', {
                 title: settings["SiteName"],
-                nowdate:util.getNowDate(),
-                nowweek:util.getNowWeek(),
+                nowdate:tool.getNowDate(),
+                nowweek:tool.getNowWeek(),
                 tip:tip.tip_content
             });
         }

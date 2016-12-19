@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Table</title>
+    <link rel="stylesheet" href="/libs/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="/stylesheets/admin.css" media="all">
+    <link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/stylesheets/table.css" />
+</head>
+
+<body>
+<div class="admin-main">
+    <blockquote class="layui-elem-quote">
+        <p>文章分类</p>
+    </blockquote>
+    <div class="site-demo-button" style="margin-bottom: 10px;">
+        <button class="layui-btn site-demo-layer" id="add"> <i class="layui-icon">&#xe608;</i> 添加信息</button>
+    </div>
+    <fieldset class="layui-elem-field">
+        <legend>数据列表</legend>
+        <div class="layui-field-box">
+            <table class="site-table table-hover ">
+                <colgroup>
+                    <col width="150">
+                    <col width="150">
+                    <col width="150">
+                    <col width="150">
+                    <col >
+                    <col >
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>分类名称</th>
+                    <th>图标地址</th>
+                    <th>链接地址</th>
+                    <th>备注</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="tbody">
+                <script id="tpl" type="text/html">
+                    {{#  layui.each(d.list, function(index, item){ }}
+                    <tr >
+                        <td>{{ item.CateName }}</td>
+                        <td>{{ item.Img }}</td>
+                        <td>{{ item.Link}}</td>
+                        <td><span class="span">{{ item.Remark}}</span></td>
+                        <td>{{# if (item.State) { }}
+                            <a>有效</a>
+                            {{# } else { }}
+                            <a>无效</a>
+                            {{# } }}
+                        </td>
+                        <td>
+                            <a href="/manage/article_edit_1" class="layui-btn layui-btn-mini">编辑</a>
+                            <a href="javascript:;" data-id="1" data-opt="del" class="layui-btn layui-btn-danger layui-btn-mini">删除</a>
+                        </td>
+                    </tr>
+                    {{#  }); }}
+                </script>
+                </tbody>
+            </table>
+            <div class="admin-table-page">
+                <div id="page" class="page">
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+<div class="admin-modal" style="display: none;">
+    <blockquote class="layui-elem-quote">
+        <p>
+          <a href="javascript:;" id="back">文章分类<span class="layui-box">&gt;</span></a>
+          <a href="javascript:;">信息添加</a>
+        </p>
+    </blockquote>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-form-item">
+            <label class="layui-form-label">分类名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="CateName" maxlength="100" required lay-verify="required" placeholder="请输入分类名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">图标地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="Img" maxlength="200" required lay-verify="required" placeholder="请输入图标地址" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">链接地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="Link" maxlength="200" required lay-verify="required" placeholder="请输入链接地址" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="radio" name="State" value="1" title="启用">
+                <input type="radio" name="State" value="0" title="停用" checked>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注信息</label>
+            <div class="layui-input-block">
+                <textarea name="Remark" placeholder="请输入备注信息" class="layui-textarea" style="resize: none" maxlength="200"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="formAdd">立即提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="/libs/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: 'plugins/layui/modules/'
+    });
+    layui.use(['form','laypage','layer','laytpl'], function() {
+        var $ = layui.jquery,
+                laypage = layui.laypage,
+                layer =  layui.layer ,
+                laytpl = layui.laytpl,
+                form = layui.form();
+        var pageSize=10;
+        //添加、返回监听
+        $('#add,#back').on('click', function() {
+            $(".admin-main").toggle();
+            $(".admin-modal").toggle();
+        });
+        //监听提交
+        form.on('submit(formAdd)', function(data){
+            $.ajax({
+                url: "/admin/saveCategory",
+                type: "POST",
+                data: {json:JSON.stringify( data.field)},
+                success: function (result) {
+                    if(result.flag){
+                        layer.msg(result.msg, {icon: 6});
+                        $(".admin-main").toggle();
+                        $(".admin-modal").toggle();
+                    }else{
+                        layer.msg(result.msg, {icon: 5});
+                    }
+                }
+            });
+            return false;
+        });
+        //数据获取
+        var getDataFromService = function(data,cb){
+            $.ajax({
+                url: "/admin/getCategories",
+                type: "GET",
+                data: data,
+                success: function (result) {
+                    if (typeof cb === 'function'){
+                        cb(result);
+                    }
+                }
+            });
+        }
+        var tpl = laytpl($("#tpl").html());
+        //获取分类信息
+        getDataFromService({pageNumber:1,pageSize:pageSize},function(data){
+            //分页
+            laypage({
+                cont: 'page',
+                pages: data.total,//总页数
+                groups: 5, //连续显示分页数
+                jump: function(obj, first) {
+                    //得到了当前页，用于向服务端请求对应数据
+                    var curr = obj.curr;
+                    if(!first) {
+                        getDataFromService({pageNumber:curr,pageSize:pageSize},function(data){
+                            var data = {"list":data.rows};
+                            tpl.render(data, function(html){
+                                $("#tbody").html(html);
+                            });
+                        });
+                    }
+                }
+            });
+            var data = {"list":data.rows};
+            tpl.render(data, function(html){
+                $("#tbody").html(html);
+            });
+        });
+
+
+    });
+
+</script>
+</body>
+
+</html>

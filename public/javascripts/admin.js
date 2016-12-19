@@ -43,6 +43,18 @@ layui.define(['element', 'layer', 'navbar', 'tab'], function(exports){
             });
         }
     });
+    //设置navbar
+    navbar.set({
+        elem: '#admin-navbar-side',
+        cached:false,
+        url: 'data/nav.json'
+    });
+    //渲染navbar
+    navbar.render();
+    //监听点击事件
+    navbar.on('click(side)', function(data) {
+        tab.tabAdd(data.field);
+    });
 
     //手机设备的简单适配
     var treeMobile = $('.site-tree-mobile'),
